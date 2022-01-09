@@ -9,7 +9,8 @@ def diff_equation_set(x, k):
     a3 = k["a3"]
 
     xdot = np.array(
-        [(a2 + a3) * x[2] - a1 * x[0] * x[1], a2 * x[2] - a1 * x[0] * x[1], a1 * x[0] * x[1] - (a2 + a3) * x[2],
+        [(a2 + a3) * x[2] - a1 * x[0] * x[1], a2 * x[2] - a1 * 
+        x[0] * x[1], a1 * x[0] * x[1] - (a2 + a3) * x[2],
          a3 * x[2]])
     return xdot
 
@@ -39,9 +40,10 @@ k123 = {"a1": 100, "a2": 600, "a3": 150}
 
 x0 = np.array([1, 10, 0, 0])
 t0 = 0
-tf = 0.5  #note that the end time can be changed, however the chemical reaction will reach equilibrium.
+tf = 0.5  
 dt = 0.001
 
+#note that the end time tf can be changed as a variable
 #rename the function for convinence
 f = lambda t, x: diff_equation_set(x, k123)  
 
