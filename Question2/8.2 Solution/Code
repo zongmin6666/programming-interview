@@ -1,1 +1,58 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+# diff_equation_set produces an a array containing four given differentail equation
+def diff_equation_set(x, k):
+    a1 = k["a1"]
+    a2 = k["a2"]
+    a3 = k["a3"]
+
+    xdot = np.array(
+        [(a2 + a3) * x[2] - a1 * x[0] * x[1], a2 * x[2] - a1 * x[0] * x[1], a1 * x[0] * x[1] - (a2 + a3) * x[2],
+         a3 * x[2]])
+    return xdot
+
+
+# R_K_4 impelements the R_K_4 method and return an array with values of each step
+def R_K_4(f, x0, t0, tf, dt):
+    t = np.arange(t0, tf, dt)
+    nt = t.size
+    nx = x0.size
+    x = np.zeros((nx, nt))
+
+    x[:, 0] = x0
+
+    for k in range(nt - 1):
+        k1 = dt * f(t[k], x[:, k])
+        k2 = dt * f(t[k] + dt / 2, x[:, k] + k1 / 2)
+        k3 = dt * f(t[k] + dt / 2, x[:, k] + k2 / 2)
+        k4 = dt * f(t[k] + dt, x[:, k] + k3)
+
+        dx = (k1 + 2 * k2 + 2 * k3 + k4) / 6
+        x[:, k + 1] = x[:, k] + dx
+    return x, t
+
+
+# set initial values
+k123 = {"a1": 100, "a2": 600, "a3": 150}
+
+x0 = np.array([1, 10, 0, 0])
+t0 = 0
+tf = 0.5  ##the end time can be changed
+dt = 0.001
+
+f = lambda t, x: diff_equation_set(x, k123)  #rename the function for convinence
+
+x, t = R_K_4(f, x0, t0, tf, dt)
+
+plt.plot(t, x[0, :], label="e")
+plt.plot(t, x[1, :], label="s")
+plt.plot(t, x[2, :], label="a")
+plt.plot(t, x[3, :], label="p")
+plt.xlabel("time")
+plt.ylabel("μm/L")
+plt.grid()
+plt.legend()
+plt.show()
 
