@@ -1,1 +1,81 @@
+import os
+import time
 
+import numpy as np
+import pandas as pd
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.utils.data import DataLoader
+
+from torchvision import datasets
+from torchvision import transforms
+
+import matplotlib.pyplot as plt
+from PIL import Image
+
+train_transforms = transforms.Compose([
+                            transforms.RandomRotation(5, fill=(0,)),
+                            transforms.RandomCrop(28, padding=2),
+                            transforms.ToTensor()])
+
+test_transforms = transforms.Compose([
+                           transforms.ToTensor()])
+         
+test_dataset = datasets.MNIST(root='data', 
+                              train=False, 
+                              transform=train_transforms,
+                              download=True)
+train_dataset = datasets.MNIST(root='data', 
+                               train=True, 
+                               transform=test_transforms,
+                               download=True)
+                      
+x=[]
+y=[]
+train_data = []
+test_data=[]
+
+for i in range(60000):
+  if(train_dataset.targets[i]==0 or train_dataset.targets[i]==7): 
+   
+    x=[train_dataset.data[i],train_dataset.targets[i]]
+    
+    train_data.append(x)
+
+
+for i in range(10000):
+  if(test_dataset.targets[i]==0 or test_dataset.targets[i]==7):
+
+    x=[test_dataset.data[i],test_dataset.targets[i]]
+
+    test_data.append(x)
+
+#note that Size of Bags =100(ie BAG_SIZE=100)
+# shuffle=true so that Bags are created with random sampling
+train_load = DataLoader(dataset=train_data, 
+                          batch_size=100, 
+                          shuffle=True)
+
+test_load = DataLoader(dataset=test_data, 
+                         batch_size=100, 
+                         shuffle=False)
+                         
+##show filetered data size
+print(f'Number of training examples after filtering: {len(train_data)}')
+print(f'Number of testing examples after filtering: {len(test_data)}')
+
+#plot_images plot 25th images
+def plot_images(images):
+    print("25th images")
+    rows = 5
+    cols = 5
+    fig = plt.figure()
+    for i in range(rows*cols):
+        ax = fig.add_subplot(rows, cols, i+1)
+        ax.imshow(images[i].view(28,28).cpu().numpy()) #tensor to numpy
+        ax.axis("off")
+      
+images = [image for image, label in [train_data[i]  for i in range(25)]]
+plot_images(images)
